@@ -48,13 +48,15 @@
         padding-bottom: 12px;
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
       }
-      @media (max-width: 991.98px) {
+@media (max-width: 991.98px) {
   .sticky-tools {
     position: static;
     padding-top: 10px;
     padding-bottom: 10px;
   }
+  .hr-soft { display: none; } /* optionnel: évite de gaspiller de la hauteur mobile */
 }
+
 
       .muted {
         color: rgba(0, 0, 0, 0.65);
@@ -166,11 +168,9 @@
           class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3"
         >
           <div>
-            <h1 class="h3 mb-1">Recettes en cubes, système congélation</h1>
+            <h1 class="h3 mb-1">Cubes - Recettes et inventaire</h1>
             <p class="mb-0 muted">
-              Format Bootstrap simple, avec table des matières, étiquettes,
-              recherche. Langue: français (Canada). Quantités, étapes, formats
-              de cubes, pairings, coûts et nutrition (estimations).
+
             </p>
           </div>
           <div class="note">
@@ -197,178 +197,83 @@
       </div>
     </header>
     <!-- Tools --><div class="d-none d-lg-block">
-    <div class="sticky-tools">
-      <div class="container container-max">
-        <!-- Mobile: bouton hamburger -->
-<div class="d-lg-none d-flex justify-content-between align-items-center mb-2">
-  <div class="smallcaps muted">Outils</div>
+<div class="sticky-tools">
+  <div class="container container-max">
 
-  <button
-    class="btn btn-primary btn-sm"
-    type="button"
-    data-bs-toggle="offcanvas"
-    data-bs-target="#toolsDrawer"
-    aria-controls="toolsDrawer"
-  >
-    ☰ Outils
-  </button>
-</div>
-
-<!-- Offcanvas (mobile tools drawer) -->
-<div
-  class="offcanvas offcanvas-end"
-  tabindex="-1"
-  id="toolsDrawer"
-  aria-labelledby="toolsDrawerLabel"
->
-  <div class="offcanvas-header">
-    <h5 class="offcanvas-title" id="toolsDrawerLabel">Outils</h5>
-    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
-  </div>
-
-  <div class="offcanvas-body">
-    <!-- Déplace ici: recherche + filtres + TOC -->
-    <div class="mb-3">
-      <label for="searchInputMobile" class="form-label smallcaps muted">Recherche</label>
-      <input
-        id="searchInputMobile"
-        type="search"
-        class="form-control"
-        placeholder="Ex: soupe, coco, tag:vegetarien…"
-      />
-      <div class="form-text">
-        Astuce: <span class="kbd">en-stock</span>, <span class="kbd">tag:soupe</span>
-      </div>
+    <!-- Mobile: barre minimale -->
+    <div class="d-lg-none d-flex justify-content-between align-items-center">
+      <div class="smallcaps muted">Outils</div>
+      <button
+        class="btn btn-primary btn-sm"
+        type="button"
+        data-bs-toggle="offcanvas"
+        data-bs-target="#toolsDrawer"
+        aria-controls="toolsDrawer"
+      >
+        ☰ Outils
+      </button>
     </div>
 
-    <div class="mb-3">
-      <div class="smallcaps muted mb-2">Filtres</div>
-      <div class="d-flex flex-wrap gap-2">
-        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:soupe">Soupes</button>
-        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:bol">Bols</button>
-        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:vegetarien">Végétarien</button>
-        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:poisson">Poisson</button>
-        <button class="btn btn-success btn-sm btn-chip" id="toggleInStockMobile" aria-pressed="true">En stock seulement</button>
-        <button class="btn btn-outline-secondary btn-sm btn-chip" id="clearBtnMobile">Réinitialiser</button>
-      </div>
-    </div>
-
-    <div class="mb-2">
-      <div class="smallcaps muted mb-2">Table des matières</div>
-      <div class="toc d-flex flex-column gap-2">
-        <a href="#sec-soupes" data-bs-dismiss="offcanvas">Soupes et ragoûts</a>
-        <a href="#sec-mains" data-bs-dismiss="offcanvas">Mains</a>
-        <a href="#sec-riz" data-bs-dismiss="offcanvas">Riz et grains</a>
-        <a href="#sec-veg" data-bs-dismiss="offcanvas">Bases légumes</a>
-        <a href="#sec-denses" data-bs-dismiss="offcanvas">Composants denses</a>
-        <a href="#sec-bols" data-bs-dismiss="offcanvas">Bols</a>
-        <a href="#sec-patisserie" data-bs-dismiss="offcanvas">Boulangerie</a>
-        <a href="#sec-sides" data-bs-dismiss="offcanvas">Accompagnements</a>
-
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-        <div class="row g-2 align-items-center">
-          <div class="col-12 col-lg-6">
-            <label class="form-label mb-1 smallcaps muted" for="searchInput"
-              >Recherche</label
-            >
-            <input
-              aria-label="Recherche"
-              class="form-control"
-              id="searchInput"
-              placeholder="Ex: chili verde, 2 tasses, edamame, coût, fibres..."
-              type="search"
-            />
-            <div class="form-text">
-              Astuce: tape <span class="kbd">tag:</span> ex
-              <span class="kbd">tag:soupe</span> ou
-              <span class="kbd">tag:vegetarien</span>.
-            </div>
-          </div>
-          <div class="col-12 col-lg-6">
-            <label class="form-label mb-1 smallcaps muted"
-              >Filtres rapides</label
-            >
-            <div class="d-flex flex-wrap gap-2">
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:soupe"
-              >
-                Soupes 2 tasses
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:bol"
-              >
-                Bols
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:proteine"
-              >
-                Protéines
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:vegetarien"
-              >
-                Végétarien
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:poisson"
-              >
-                Poisson
-              </button>
-              <button
-                class="btn btn-outline-primary btn-sm btn-chip"
-                data-filter="tag:cuisson-four"
-              >
-                Four
-              </button>
-
-              <button
-                class="btn btn-success btn-sm btn-chip"
-                id="toggleInStock"
-                aria-pressed="true"
-                title="Afficher seulement les recettes en stock"
-              >
-                En stock seulement
-              </button>
-
-              <button
-                class="btn btn-outline-secondary btn-sm btn-chip"
-                id="clearBtn"
-              >
-                Réinitialiser
-              </button>
-            </div>
+    <!-- Desktop seulement: tes outils actuels -->
+    <div class="d-none d-lg-block">
+      <div class="row g-2 align-items-center">
+        <div class="col-12 col-lg-6">
+          <label class="form-label mb-1 smallcaps muted" for="searchInput">Recherche</label>
+          <input
+            aria-label="Recherche"
+            class="form-control"
+            id="searchInput"
+            placeholder="Ex: chili verde, 2 tasses, edamame, coût, fibres..."
+            type="search"
+          />
+          <div class="form-text">
+            Astuce: tape <span class="kbd">tag:</span> ex
+            <span class="kbd">tag:soupe</span> ou <span class="kbd">tag:vegetarien</span>.
           </div>
         </div>
-        <div class="hr-soft"></div>
-        <!-- TOC -->
-        <div class="row g-3">
-          <div class="col-12 col-lg-7">
-            <div class="toc">
-              <div class="smallcaps muted mb-1">Table des matières</div>
-              <div class="d-flex flex-wrap gap-3">
-                <a href="#sec-soupes">Soupes et ragoûts 2 tasses</a>
-                <a href="#sec-Platsprincipaux">Plats principaux 1 tasse</a>
-                <a href="#sec-riz">Riz et grains 1 tasse</a>
-                <a href="#sec-veg">Bases légumes 1 tasse</a>
-                <a href="#sec-denses">Composants denses 1/2 tasse</a>
-                <a href="#sec-bols">Bols assemblés</a>
-                <a href="#sec-patisserie">Boulangerie en cubes</a>
-                <a href="#sec-sides">Accompagnements et idées</a>
-              </div>
+
+        <div class="col-12 col-lg-6">
+          <label class="form-label mb-1 smallcaps muted">Filtres rapides</label>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:soupe">Soupes 2 tasses</button>
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:bol">Bols</button>
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:proteine">Protéines</button>
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:vegetarien">Végétarien</button>
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:poisson">Poisson</button>
+            <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:cuisson-four">Four</button>
+
+            <button class="btn btn-success btn-sm btn-chip" id="toggleInStock" aria-pressed="true">
+              En stock seulement
+            </button>
+            <button class="btn btn-outline-secondary btn-sm btn-chip" id="clearBtn">Réinitialiser</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="hr-soft"></div>
+
+      <div class="row g-3">
+        <div class="col-12 col-lg-7">
+          <div class="toc">
+            <div class="smallcaps muted mb-1">Table des matières</div>
+            <div class="d-flex flex-wrap gap-3">
+              <a href="#sec-soupes">Soupes et ragoûts 2 tasses</a>
+              <a href="#sec-Platsprincipaux">Plats principaux 1 tasse</a>
+              <a href="#sec-riz">Riz et grains 1 tasse</a>
+              <a href="#sec-veg">Bases légumes 1 tasse</a>
+              <a href="#sec-denses">Composants denses 1/2 tasse</a>
+              <a href="#sec-bols">Bols assemblés</a>
+              <a href="#sec-patisserie">Boulangerie en cubes</a>
+              <a href="#sec-sides">Accompagnements et idées</a>
             </div>
           </div>
         </div>
       </div>
+    </div>
+
+  </div>
+</div>
+
     </div>
     <main class="py-4">
       <div class="container container-max">
@@ -3385,5 +3290,48 @@ function applyMode() {
         setBtnUI();
       })();
     </script>
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="toolsDrawer" aria-labelledby="toolsDrawerLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="toolsDrawerLabel">Outils</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Fermer"></button>
+  </div>
+
+  <div class="offcanvas-body">
+    <div class="mb-3">
+      <label for="searchInputMobile" class="form-label smallcaps muted">Recherche</label>
+      <input id="searchInputMobile" type="search" class="form-control" placeholder="Ex: soupe, coco, tag:vegetarien…" />
+      <div class="form-text">
+        Astuce: <span class="kbd">en-stock</span>, <span class="kbd">tag:soupe</span>
+      </div>
+    </div>
+
+    <div class="mb-3">
+      <div class="smallcaps muted mb-2">Filtres</div>
+      <div class="d-flex flex-wrap gap-2">
+        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:soupe" data-bs-dismiss="offcanvas">Soupes</button>
+        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:bol" data-bs-dismiss="offcanvas">Bols</button>
+        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:vegetarien" data-bs-dismiss="offcanvas">Végétarien</button>
+        <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:poisson" data-bs-dismiss="offcanvas">Poisson</button>
+        <button class="btn btn-success btn-sm btn-chip" id="toggleInStockMobile" aria-pressed="true">En stock seulement</button>
+        <button class="btn btn-outline-secondary btn-sm btn-chip" id="clearBtnMobile">Réinitialiser</button>
+      </div>
+    </div>
+
+    <div class="mb-2">
+      <div class="smallcaps muted mb-2">Table des matières</div>
+      <div class="toc d-flex flex-column gap-2">
+        <a href="#sec-soupes" data-bs-dismiss="offcanvas">Soupes et ragoûts</a>
+        <a href="#sec-Platsprincipaux" data-bs-dismiss="offcanvas">Mains</a>
+        <a href="#sec-riz" data-bs-dismiss="offcanvas">Riz et grains</a>
+        <a href="#sec-veg" data-bs-dismiss="offcanvas">Bases légumes</a>
+        <a href="#sec-denses" data-bs-dismiss="offcanvas">Composants denses</a>
+        <a href="#sec-bols" data-bs-dismiss="offcanvas">Bols</a>
+        <a href="#sec-patisserie" data-bs-dismiss="offcanvas">Boulangerie</a>
+        <a href="#sec-sides" data-bs-dismiss="offcanvas">Accompagnements</a>
+      </div>
+    </div>
+  </div>
+</div>
+
   </body>
 </html>
