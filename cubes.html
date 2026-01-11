@@ -1,0 +1,1600 @@
+<!doctype html>
+<html lang="fr-CA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Cubes - Recettes et inventaire</title>
+    <!-- Bootstrap CSS -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --maxw: 1180px;
+      }
+      body {
+        background: #f7f7fb;
+      }
+      .container-max {
+        max-width: var(--maxw);
+      }
+      .recipe-card {
+        border: 0;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+      }
+      .tag {
+        font-size: 0.8rem;
+        border-radius: 999px;
+      }
+      .mono {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+      }
+      .toc a {
+        text-decoration: none;
+      }
+      .toc a:hover {
+        text-decoration: underline;
+      }
+      .sticky-tools {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: #f7f7fb;
+        padding-top: 12px;
+        padding-bottom: 12px;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      }
+      .muted {
+        color: rgba(0, 0, 0, 0.65);
+      }
+      .smallcaps {
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        font-size: 0.78rem;
+      }
+      .section-title {
+        margin-top: 34px;
+        margin-bottom: 10px;
+      }
+      .btn-chip {
+        border-radius: 999px;
+      }
+      .kbd {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+          "Liberation Mono", "Courier New", monospace;
+        border: 1px solid rgba(0, 0, 0, 0.12);
+        padding: 2px 6px;
+        border-radius: 6px;
+        background: white;
+      }
+      .list-tight li {
+        margin-bottom: 4px;
+      }
+      .note {
+        background: #fff;
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        border-radius: 14px;
+        padding: 12px 14px;
+      }
+      .hr-soft {
+        border: 0;
+        height: 1px;
+        background: rgba(0, 0, 0, 0.08);
+        margin: 14px 0;
+      }
+      .badge-cat {
+        background: rgba(13, 110, 253, 0.1);
+        color: #0d6efd;
+        border: 1px solid rgba(13, 110, 253, 0.25);
+      }
+      .badge-cube {
+        background: rgba(25, 135, 84, 0.12);
+        color: #198754;
+        border: 1px solid rgba(25, 135, 84, 0.25);
+      }
+      .badge-cost {
+        background: rgba(111, 66, 193, 0.12);
+        color: #6f42c1;
+        border: 1px solid rgba(111, 66, 193, 0.25);
+      }
+      .badge-nutri {
+        background: rgba(255, 193, 7, 0.15);
+        color: #8a6d00;
+        border: 1px solid rgba(255, 193, 7, 0.35);
+      }
+    </style>
+  </head>
+
+  <body>
+    <header class="py-4">
+      <div class="container container-max">
+        <div class="d-flex flex-column flex-md-row align-items-start align-items-md-center justify-content-between gap-3">
+          <div>
+            <h1 class="h3 mb-1">Recettes en cubes, système congélation</h1>
+            <p class="mb-0 muted">
+              Format Bootstrap simple, avec table des matières, étiquettes, recherche.
+              Langue: français (Canada). Quantités, étapes, formats de cubes, pairings, coûts et nutrition (estimations).
+            </p>
+          </div>
+          <div class="note">
+            <div class="smallcaps muted mb-1">Règles du système</div>
+            <ul class="list-tight mb-0">
+              <li>Soupes et ragoûts complets: <b>2 tasses</b> par portion cube.</li>
+              <li>Plats principaux modulaires, riz, bases: <b>1 tasse</b> par cube.</li>
+              <li>Composants denses (racines, add-ins): <b>1/2 tasse</b> par cube.</li>
+              <li>Portions saveurs: <b>30 ml</b> au besoin.</li>
+              <li>Sans oignon, céleri, carotte frais. Poudres et bouillon acceptés.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Tools -->
+    <div class="sticky-tools">
+      <div class="container container-max">
+        <div class="row g-2 align-items-center">
+          <div class="col-12 col-lg-6">
+            <label for="searchInput" class="form-label mb-1 smallcaps muted">Recherche</label>
+            <input
+              id="searchInput"
+              type="search"
+              class="form-control"
+              placeholder="Ex: chili verde, 2 tasses, edamame, coût, fibres..."
+              aria-label="Recherche"
+            />
+            <div class="form-text">
+              Astuce: tape <span class="kbd">tag:</span> ex <span class="kbd">tag:soupe</span> ou <span class="kbd">tag:vegetarien</span>.
+            </div>
+          </div>
+          <div class="col-12 col-lg-6">
+            <label class="form-label mb-1 smallcaps muted">Filtres rapides</label>
+            <div class="d-flex flex-wrap gap-2">
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:soupe">Soupes 2 tasses</button>
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:bol">Bols</button>
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:proteine">Protéines</button>
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:vegetarien">Végétarien</button>
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:poisson">Poisson</button>
+              <button class="btn btn-outline-primary btn-sm btn-chip" data-filter="tag:cuisson-four">Four</button>
+              <button class="btn btn-outline-secondary btn-sm btn-chip" id="clearBtn">Réinitialiser</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr-soft"></div>
+
+        <!-- TOC -->
+        <div class="row g-3">
+          <div class="col-12 col-lg-7">
+            <div class="toc">
+              <div class="smallcaps muted mb-1">Table des matières</div>
+              <div class="d-flex flex-wrap gap-3">
+                <a href="#sec-soupes">Soupes et ragoûts 2 tasses</a>
+                <a href="#sec-Platsprincipaux">Plats principaux 1 tasse</a>
+                <a href="#sec-riz">Riz et grains 1 tasse</a>
+                <a href="#sec-veg">Bases légumes 1 tasse</a>
+                <a href="#sec-denses">Composants denses 1/2 tasse</a>
+                <a href="#sec-bols">Bols assemblés</a>
+                <a href="#sec-patisserie">Boulangerie en cubes</a>
+                <a href="#sec-sides">Accompagnements et idées</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="note">
+              <div class="smallcaps muted mb-1">Notes sur coûts et nutrition</div>
+              <div class="muted">
+                Coûts et macros sont des <b>estimations</b> (Ottawa, CAD). Selon marques, promos,
+                quantité réelle de protéines, et niveau de sodium. Utilise-les pour planifier, pas comme
+                étiquette officielle.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <Plats principaux class="py-4">
+      <div class="container container-max">
+
+        <!-- ========================= -->
+        <!-- SOUPES 2 TASSES -->
+        <!-- ========================= -->
+        <h2 id="sec-soupes" class="h4 section-title">Soupes et ragoûts, portions 2 tasses</h2>
+        <p class="muted">Chaque fiche: recette, format de cubes, pairings, nutrition et coût par portion de 2 tasses.</p>
+
+        <div class="row g-3" id="recipes">
+
+          <!-- Ham & Peas -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses porc fibres proteine congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Soupe</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Soupe jambon et pois</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 8 tasses, 4 cubes de 2 tasses
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1 tasse pois cassés jaunes secs, rincés</li>
+                      <li>6 tasses bouillon (jusqu’à 3 tasses peuvent être du lactosérum)</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1 c. à thé poudre d’oignon</li>
+                      <li>1/2 c. à thé thym séché</li>
+                      <li>1 feuille de laurier, optionnel</li>
+                      <li>2 tasses jambon cuit maigre en dés (env 400 à 500 g)</li>
+                      <li>3 tasses pois verts surgelés</li>
+                      <li>Poivre noir, sel si nécessaire</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Mettre pois cassés, bouillon, poudres, thym, laurier dans une casserole.</li>
+                      <li>Amener à ébullition puis réduire à frémissement doux, couvercle entrouvert.</li>
+                      <li>Mijoter 35 à 40 min, remuer parfois.</li>
+                      <li>Ajouter pois verts et jambon, mijoter 10 min.</li>
+                      <li>Retirer laurier. Mixer environ 1/3 de la soupe, remettre au chaudron.</li>
+                      <li>Refroidir, portionner en cubes de 2 tasses, congeler.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>Se suffit à elle-même.</li>
+                      <li>Si tu veux du croquant: 1/2 tasse chou rôti.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 380 à 420 kcal</span>
+                      <span class="badge badge-nutri">≈ 30 à 34 g protéines</span>
+                      <span class="badge badge-nutri">≈ 14 à 16 g fibres</span>
+                      <span class="badge badge-cost">≈ 2.20 à 2.80 $</span>
+                    </div>
+                    <div class="muted mt-2">
+                      Coût varie selon prix du jambon et du bouillon.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cream of Mushroom -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses vegetarien champignon fibres congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Soupe</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Crème de champignons, version saine</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 6 à 7 tasses, 3 cubes de 2 tasses
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1.2 kg champignons tranchés</li>
+                      <li>2 c. à soupe huile d’olive</li>
+                      <li>1 c. à soupe beurre, optionnel</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1/2 c. à thé poudre d’oignon</li>
+                      <li>1/2 c. à thé thym</li>
+                      <li>4 tasses bouillon (1 à 2 tasses peuvent être du lactosérum)</li>
+                      <li>1 tasse lait évaporé ou boisson soya non sucrée</li>
+                      <li>Poivre noir généreux</li>
+                      <li>Option: 1/2 tasse haricots blancs cuits, mixés (body + fibres)</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Chauffer huile (et beurre) dans une grande casserole large.</li>
+                      <li>Cuire les champignons en 2 à 3 lots, sans surcharger, jusqu’à bien brunis (20 à 25 min).</li>
+                      <li>Ajouter poudres et thym, 30 secondes.</li>
+                      <li>Ajouter bouillon, mijoter 15 min.</li>
+                      <li>Mixer la majorité. Ajouter lait évaporé et option haricots mixés.</li>
+                      <li>Mijoter 5 min. Refroidir, cubes 2 tasses.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>Avec 1/2 tasse de chou rôti, pour du croquant.</li>
+                      <li>Option protéine: 1/2 tasse haricots ou dés de jambon.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 260 à 320 kcal</span>
+                      <span class="badge badge-nutri">≈ 14 à 18 g protéines</span>
+                      <span class="badge badge-nutri">≈ 6 à 8 g fibres</span>
+                      <span class="badge badge-cost">≈ 2.90 à 3.10 $</span>
+                    </div>
+                    <div class="muted mt-2">
+                      Hypothèse champignons à 8 $/kg. Haricots ajoutent un peu de coût.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basque fish stew -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses poisson basque paprika congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Ragoût</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:poisson</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Ragoût de poisson style basque</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 6 tasses, 3 cubes de 2 tasses
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1 lb (450 g) poisson blanc ferme en gros morceaux (morue, aiglefin, goberge)</li>
+                      <li>1.5 tasses tomates concassées</li>
+                      <li>2 tasses bouillon</li>
+                      <li>1 tasse mélange de racines rôties (idéalement pomme de terre majoritaire)</li>
+                      <li>1 c. à soupe huile d’olive</li>
+                      <li>1 c. à thé paprika fumé</li>
+                      <li>1/2 c. à thé paprika doux</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1/2 c. à thé poudre d’oignon</li>
+                      <li>1 feuille de laurier</li>
+                      <li>Poivre noir</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Chauffer l’huile, ajouter les épices 30 secondes.</li>
+                      <li>Ajouter tomates et bouillon. Mijoter 10 min.</li>
+                      <li>Ajouter racines rôties et laurier.</li>
+                      <li>Ajouter poisson. Mijoter 5 à 7 min, juste assez pour que ça s’effiloche.</li>
+                      <li>Retirer laurier. Refroidir, cubes 2 tasses.</li>
+                    </ol>
+                    <div class="muted mt-2">
+                      Astuce: éviter de trop brasser après ajout du poisson.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>Meilleur seul, cube 2 tasses.</li>
+                      <li>Si tu ajoutes quelque chose: juste poivre ou herbes au service.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 330 à 420 kcal</span>
+                      <span class="badge badge-nutri">≈ 28 à 35 g protéines</span>
+                      <span class="badge badge-nutri">≈ 4 à 7 g fibres</span>
+                      <span class="badge badge-cost">≈ 3.75 à 4.50 $</span>
+                    </div>
+                    <div class="muted mt-2">
+                      Coût dominé par le poisson. Varie selon promotions.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Thai coconut fish soup -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses poisson thai coco champignon congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Soupe</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:poisson</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Soupe de poisson coco, style thaï</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 6 tasses, 3 cubes de 2 tasses
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1 lb (450 g) poisson blanc ferme en morceaux</li>
+                      <li>3 tasses lait de coco léger</li>
+                      <li>2 tasses bouillon</li>
+                      <li>1 tasse champignons tranchés</li>
+                      <li>1 c. à soupe pâte de curry rouge</li>
+                      <li>1 c. à thé poudre de gingembre</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>Option: 1 c. à thé sauce poisson</li>
+                      <li>À ajouter au service: jus de lime, coriandre, chili</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Mijoter coco + bouillon + pâte curry + poudres 10 min doucement.</li>
+                      <li>Ajouter champignons 3 à 4 min.</li>
+                      <li>Ajouter poisson, mijoter 5 min max.</li>
+                      <li>Refroidir et congeler en cubes 2 tasses.</li>
+                      <li>Ajouter lime et herbes à la réchauffe.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>À manger seul, cube 2 tasses.</li>
+                      <li>Finition: lime, coriandre, chili crisp.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 380 à 450 kcal</span>
+                      <span class="badge badge-nutri">≈ 26 à 32 g protéines</span>
+                      <span class="badge badge-nutri">≈ 3 à 5 g fibres</span>
+                      <span class="badge badge-cost">≈ 5.50 à 6.80 $</span>
+                    </div>
+                    <div class="muted mt-2">
+                      Coût dominé par coco + poisson.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Miso ginger chicken/tofu stew -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses poulet miso gingembre congelo proteine">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Soupe</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                </div>
+                <h3 class="h5 mb-1">Soupe miso gingembre, poulet ou tofu</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 6 tasses, 3 cubes de 2 tasses
+                </div>
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1 lb (450 g) hauts de cuisse en cubes OU tofu ferme</li>
+                      <li>5 tasses bouillon</li>
+                      <li>2 c. à soupe miso blanc</li>
+                      <li>1 c. à thé poudre de gingembre</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1 tasse champignons tranchés</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Mijoter poulet et bouillon avec gingembre et ail 20 min.</li>
+                      <li>Retirer du feu, dissoudre le miso dans un peu de bouillon chaud, remettre.</li>
+                      <li>Ajouter champignons 5 min à feu doux.</li>
+                      <li>Refroidir, cubes 2 tasses.</li>
+                    </ol>
+                    <div class="muted mt-2">
+                      Ne pas bouillir fort après ajout du miso.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>Très bon seul. Option: ajouter épinards à la réchauffe.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 320 à 420 kcal</span>
+                      <span class="badge badge-nutri">≈ 25 à 35 g protéines</span>
+                      <span class="badge badge-nutri">≈ 2 à 5 g fibres</span>
+                      <span class="badge badge-cost">≈ 3.80 à 5.00 $</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Smoky cabbage & white bean stew -->
+          <div class="col-12 col-lg-6 recipe" data-tags="soupe 2-tasses vegetarien chou haricots fibres mexicain-sans-oignon congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Soupe</span>
+                  <span class="badge badge-cube">Cube 2 tasses</span>
+                  <span class="badge text-bg-light tag">tag:soupe</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Ragoût chou et haricots blancs, fumé</h3>
+                <div class="muted mb-2">
+                  <span class="mono">Rendement:</span> environ 6 tasses, 3 cubes de 2 tasses
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>6 tasses chou haché</li>
+                      <li>3 tasses haricots blancs cuits (ou 2 grosses boîtes rincées)</li>
+                      <li>2 tasses tomates concassées</li>
+                      <li>3 tasses bouillon (jusqu’à 50% lactosérum)</li>
+                      <li>1 c. à soupe huile</li>
+                      <li>1 c. à thé paprika fumé</li>
+                      <li>1/2 c. à thé paprika doux</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1/2 c. à thé poudre d’oignon</li>
+                      <li>Poivre, option chili</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Cuire le chou à l’huile 8 à 10 min pour l’attendrir.</li>
+                      <li>Ajouter épices 30 secondes.</li>
+                      <li>Ajouter tomates, haricots, bouillon.</li>
+                      <li>Mijoter 25 à 30 min, découvert.</li>
+                      <li>Refroidir, cubes 2 tasses.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Pairings</div>
+                    <ul class="list-tight">
+                      <li>Se suffit à elle-même.</li>
+                      <li>Option: un trait de vinaigre au service.</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Nutrition et coût, par 2 tasses</div>
+                    <div class="d-flex flex-wrap gap-2">
+                      <span class="badge badge-nutri">≈ 320 à 420 kcal</span>
+                      <span class="badge badge-nutri">≈ 16 à 22 g protéines</span>
+                      <span class="badge badge-nutri">≈ 12 à 16 g fibres</span>
+                      <span class="badge badge-cost">≈ 1.80 à 2.70 $</span>
+                    </div>
+                    <div class="muted mt-2">
+                      Très économique, riche en fibres.
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- Plats principaux 1 TASSE -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-Platsprincipaux" class="h4 section-title">Plats principaux et sauces, cubes de 1 tasse</h2>
+            <p class="muted mb-0">Ces cubes sont des briques: on assemble avec riz et légumes pour atteindre 2.25 à 2.5 tasses.</p>
+          </div>
+
+          <!-- Turkey black bean chili verde (ground) -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse chili verde dinde haricots fibres congelo proteine">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Chili verde dinde et haricots noirs</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1.25 lb (570 g) dinde hachée (idéalement 93%)</li>
+                      <li>2 tasses haricots noirs cuits</li>
+                      <li>2 tasses salsa verde (pot) ou tomatilles mixées</li>
+                      <li>2 tasses bouillon (jusqu’à 50% lactosérum)</li>
+                      <li>1 c. à thé cumin</li>
+                      <li>1 c. à thé origan</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>Sel, poivre</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Cuire la dinde à feu moyen jusqu’à plus rose, sans trop la sécher.</li>
+                      <li>Ajouter épices, haricots, salsa verde et bouillon.</li>
+                      <li>Mijoter 25 à 30 min, découvert, jusqu’à texture épaisse.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse chili + 0.75 tasse riz + 0.75 tasse légumes</li>
+                  <li>Ou 1 tasse chili + 1/2 tasse racines rôties + 3/4 tasse chou rôti</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Nutrition et coût, par dîner (2.5 tasses assemblées)</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 3.50 à 4.50 $</span>
+                  <span class="badge badge-nutri">≈ 500 à 650 kcal (selon riz)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- DIY chili verde pulled chicken thighs -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse chili verde poulet effiloche tomatilles congelo proteine cuisson-four">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                  <span class="badge text-bg-light tag">tag:cuisson-four</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Chili verde maison, poulet effiloché (sans oignon frais)</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1.5 kg hauts de cuisse désossés, sans peau</li>
+                      <li>750 g tomatilles (env 1.5 lb), décortiquées</li>
+                      <li>2 piments poblano</li>
+                      <li>1 à 2 jalapeños</li>
+                      <li>3 gousses ail, ou 1.5 c. à thé poudre d’ail</li>
+                      <li>1 tasse bouillon</li>
+                      <li>1 c. à soupe huile</li>
+                      <li>1 c. à thé poudre d’oignon</li>
+                      <li>1 c. à thé cumin</li>
+                      <li>1/2 c. à thé origan</li>
+                      <li>Sel, poivre</li>
+                      <li>Option: 1/2 tasse haricots blancs mixés (body)</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Four à 425°F. Rôtir tomatilles et piments 20 à 25 min.</li>
+                      <li>Mixer avec bouillon et épices.</li>
+                      <li>Dans un chaudron: saisir légèrement le poulet 2 à 3 min par côté.</li>
+                      <li>Ajouter sauce verde, mijoter couvert 30 à 35 min.</li>
+                      <li>Effilocher en grosses fibres, remettre, mijoter 10 min découvert.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse verde + 0.75 tasse riz + 0.75 tasse chou et edamame</li>
+                  <li>Finition au service: lime, coriandre, chili</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner assemblé</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 4.50 à 6.50 $ (selon prix du poulet)</span>
+                  <span class="badge badge-nutri">≈ 550 à 750 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Black bean quinoa chili -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse vegetarien chili haricots quinoa fibres congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Chili haricots noirs et quinoa, fumé</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>3 tasses haricots noirs cuits</li>
+                      <li>1.5 tasses quinoa cuit</li>
+                      <li>2 tasses tomates concassées</li>
+                      <li>2 tasses bouillon (jusqu’à 50% lactosérum)</li>
+                      <li>1 c. à thé paprika fumé</li>
+                      <li>1 c. à thé cumin</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Tout mélanger dans une casserole.</li>
+                      <li>Mijoter 25 à 30 min, découvert.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>2 cubes (2 tasses) en bol soupe, ou 1 cube + riz + légumes</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 1.70 à 2.70 $</span>
+                  <span class="badge badge-nutri">≈ 450 à 650 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Red lentil coconut curry -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse vegetarien curry lentilles coco fibres congelo bol">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Curry coco aux lentilles rouges</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>2 tasses lentilles rouges sèches</li>
+                      <li>1 boîte lait de coco léger (400 ml)</li>
+                      <li>4 tasses bouillon (jusqu’à 50% lactosérum)</li>
+                      <li>1 c. à soupe poudre de curry</li>
+                      <li>1 c. à thé poudre de gingembre</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>2 tasses épinards surgelés</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Mélanger lentilles, liquides et épices.</li>
+                      <li>Mijoter 20 à 25 min, remuer parfois.</li>
+                      <li>Ajouter épinards, 5 min.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse curry + 0.75 tasse riz + 0.75 tasse légumes</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner bol</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 1.15 à 2.50 $</span>
+                  <span class="badge badge-nutri">≈ 480 à 650 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chickpea tomato masala -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse vegetarien masala pois-chiches tomate fibres congelo bol">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Masala tomate aux pois chiches</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>4 tasses pois chiches cuits</li>
+                      <li>2 tasses tomates concassées</li>
+                      <li>2 tasses bouillon (jusqu’à 50% lactosérum)</li>
+                      <li>1 c. à thé garam masala</li>
+                      <li>1 c. à thé cumin</li>
+                      <li>1 c. à thé coriandre moulue</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1 c. à thé poudre de gingembre</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Tout combiner, mijoter 30 min jusqu’à épais.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse masala + 0.75 tasse riz + 0.5 tasse racines rôties</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 1.20 à 3.20 $</span>
+                  <span class="badge badge-nutri">≈ 500 à 700 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Honey garlic ginger chicken cubes -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse poulet glaze miel ail gingembre epice congelo proteine cuisson-four">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Protéine</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                  <span class="badge text-bg-light tag">tag:cuisson-four</span>
+                  <span class="badge text-bg-light tag">tag:sans-oignon</span>
+                </div>
+                <h3 class="h5 mb-1">Poulet glaçage miel, ail, gingembre, léger piquant</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>1.5 kg hauts de cuisse désossés, sans peau, en morceaux</li>
+                      <li>3 c. à soupe miel</li>
+                      <li>4 c. à soupe sauce soya</li>
+                      <li>1 c. à soupe vinaigre de riz</li>
+                      <li>1 c. à soupe huile neutre ou sésame</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1.5 c. à soupe gingembre en pot, égoutté un peu</li>
+                      <li>1/4 c. à thé flocons chili (ou 1/2 c. à thé sambal)</li>
+                      <li>Option: 1 c. à thé fécule + 1 c. à soupe eau (glaze qui colle)</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Four à 425°F. Rôtir le poulet 20 à 25 min, retourner une fois.</li>
+                      <li>Chaudron: mijoter miel + soya + vinaigre + gingembre + ail + chili, épaissir au besoin.</li>
+                      <li>Mélanger poulet rôti et glaze, chauffer 2 à 3 min.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                    <div class="muted mt-2">
+                      Astuce: le glaze après cuisson, pas avant, pour un meilleur résultat au congélo.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse poulet + 0.75 tasse riz + 0.75 tasse brocoli slaw</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner assemblé</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 4.50 à 7.00 $ (selon promo poulet)</span>
+                  <span class="badge badge-nutri">≈ 550 à 800 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Paneer chickpea masala with Shan -->
+          <div class="col-12 col-lg-6 recipe" data-tags="Plats principaux 1-tasse vegetarien paneer pois-chiches masala coco congelo bol proteine fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Plats principaux</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Paneer et pois chiches masala, mélange Shan Chicken Masala</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 8 tasses, 8 cubes 1 tasse</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>450 g paneer en cubes</li>
+                      <li>2 boîtes pois chiches (540 ml), rincés</li>
+                      <li>2 c. à soupe huile</li>
+                      <li>1.5 tasses tomates concassées ou passata</li>
+                      <li>1 tasse eau ou bouillon</li>
+                      <li>1/2 tasse lait de coco léger (ou lait évaporé, au choix)</li>
+                      <li>2.5 c. à soupe mélange Shan Chicken Masala (ajuster au goût)</li>
+                      <li>1 c. à thé poudre d’ail</li>
+                      <li>1/2 c. à thé poudre d’oignon</li>
+                      <li>Option: 1/2 tasse lentilles cuites mixées (stabilité + fibres)</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes</div>
+                    <ol class="list-tight">
+                      <li>Chauffer huile, ajouter épices 20 à 30 sec.</li>
+                      <li>Ajouter tomates, mijoter 5 min.</li>
+                      <li>Ajouter eau ou bouillon, puis option lentilles mixées, mijoter 5 min.</li>
+                      <li>Ajouter pois chiches, mijoter 10 min.</li>
+                      <li>Ajouter paneer, puis coco, mijoter 5 min max.</li>
+                      <li>Refroidir, cubes 1 tasse.</li>
+                    </ol>
+                    <div class="muted mt-2">
+                      Ajouter coco à la fin pour éviter séparation.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Assemblage suggéré</div>
+                <ul class="list-tight">
+                  <li>1 tasse masala + 0.75 tasse basmati + 0.75 tasse chou rôti</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Coût et nutrition, par dîner assemblé</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 3.50 à 6.00 $ (paneer et marques)</span>
+                  <span class="badge badge-nutri">≈ 600 à 850 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- RIZ ET GRAINS -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-riz" class="h4 section-title">Riz et grains, cubes de 1 tasse</h2>
+            <p class="muted mb-0">Le riz est toujours en cubes de 1 tasse. Tu peux utiliser 3/4 de cube selon ton appétit.</p>
+          </div>
+
+          <!-- Calrose rice -->
+          <div class="col-12 col-lg-6 recipe" data-tags="riz 1-tasse calrose poke congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Riz</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Riz Calrose pour bols type poke</h3>
+                <div class="muted mb-2">Rendement variable selon quantité. Ratio pour cuisson.</div>
+
+                <div class="smallcaps muted mb-1">Ratio</div>
+                <ul class="list-tight">
+                  <li>1 tasse riz Calrose sec</li>
+                  <li>1.25 tasse eau (option: remplacer jusqu’à 25% par lactosérum)</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Rincer légèrement.</li>
+                  <li>Cuire, refroidir rapidement, portionner en cubes de 1 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Notes congélation</div>
+                <ul class="list-tight">
+                  <li>Ne pas trop tasser, ça réchauffe mieux.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Basmati rice -->
+          <div class="col-12 col-lg-6 recipe" data-tags="riz 1-tasse basmati congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Riz</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                </div>
+                <h3 class="h5 mb-1">Riz basmati neutre</h3>
+                <div class="muted mb-2">Ratio pour cuisson et congélation.</div>
+
+                <div class="smallcaps muted mb-1">Ratio</div>
+                <ul class="list-tight">
+                  <li>1 tasse basmati sec</li>
+                  <li>1.5 tasse eau (option: jusqu’à 50% lactosérum)</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Rincer très bien.</li>
+                  <li>Cuire juste tendre, laisser évaporer 5 min, égrainer.</li>
+                  <li>Refroidir, cubes 1 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Astuce</div>
+                <div class="muted">Sous-cuire légèrement, la réchauffe termine la cuisson.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coconut basmati -->
+          <div class="col-12 col-lg-6 recipe" data-tags="riz 1-tasse basmati coco bol congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Riz</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Riz basmati coco, version congélo</h3>
+                <div class="muted mb-2">Équilibre coco pour éviter séparation.</div>
+
+                <div class="smallcaps muted mb-1">Ratio</div>
+                <ul class="list-tight">
+                  <li>1 tasse basmati sec</li>
+                  <li>0.75 tasse lait de coco léger</li>
+                  <li>0.75 tasse eau (ou un peu de lactosérum)</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Rincer bien.</li>
+                  <li>Cuire, laisser évaporer 5 min, égrainer.</li>
+                  <li>Refroidir, cubes 1 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Note</div>
+                <div class="muted">Éviter 100% coco, ça devient gras au congélo.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quinoa -->
+          <div class="col-12 col-lg-6 recipe" data-tags="grain 1-tasse quinoa congelo fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Grain</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Quinoa neutre</h3>
+                <div class="muted mb-2">Rendement: environ 6 tasses cuites si tu pars de 2 tasses sèches.</div>
+
+                <div class="smallcaps muted mb-1">Ratio</div>
+                <ul class="list-tight">
+                  <li>1 tasse quinoa sec</li>
+                  <li>2 tasses eau (jusqu’à 50% lactosérum possible)</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Rincer, cuire, refroidir, cubes 1 tasse.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- BASES LEGUMES -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-veg" class="h4 section-title">Bases légumes, cubes de 1 tasse</h2>
+            <p class="muted mb-0">Bases neutres, flexibles. Ajouter lime, vinaigre, herbes au service.</p>
+          </div>
+
+          <!-- Roasted cabbage & cauliflower -->
+          <div class="col-12 col-lg-6 recipe" data-tags="legumes 1-tasse chou chou-fleur cuisson-four congelo fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Légumes</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:cuisson-four</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Chou et chou-fleur rôtis, base neutre</h3>
+                <div class="muted mb-2">Rendement variable selon volume. Idéal pour équilibrer bols.</div>
+
+                <div class="smallcaps muted mb-1">Ingrédients</div>
+                <ul class="list-tight">
+                  <li>Chou en gros morceaux + chou-fleur</li>
+                  <li>Huile, sel, poudre d’ail</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Four à 425°F. Rôtir 30 à 35 min, retourner une fois.</li>
+                  <li>Refroidir, cubes 1 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Pairings</div>
+                <div class="muted">Chili, poulet miel, curry lentilles, masala paneer.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Spinach/kale base -->
+          <div class="col-12 col-lg-6 recipe" data-tags="legumes 1-tasse epinards kale congelo fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Légumes</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                </div>
+                <h3 class="h5 mb-1">Base épinards ou kale, sautée</h3>
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Sauter très brièvement avec poudre d’ail.</li>
+                  <li>Presser l’eau, refroidir, cubes 1 tasse.</li>
+                </ol>
+                <div class="muted">Super pour ajouter du volume sans exploser les calories.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Broccoli slaw base -->
+          <div class="col-12 col-lg-6 recipe" data-tags="legumes 1-tasse brocoli slaw congelo fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Légumes</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Base brocoli slaw, sautée légère</h3>
+                <div class="smallcaps muted mb-1">Ingrédients</div>
+                <ul class="list-tight">
+                  <li>1 sac brocoli slaw OU 2 brocolis (tiges râpées)</li>
+                  <li>Huile neutre, poudre d’ail, sel</li>
+                </ul>
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Sauter 4 à 6 min, juste tendre.</li>
+                  <li>Refroidir, cubes 1 tasse.</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+
+          <!-- Cabbage + edamame mix -->
+          <div class="col-12 col-lg-6 recipe" data-tags="legumes 1-tasse chou edamame poke bol proteine fibres congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Légumes</span>
+                  <span class="badge badge-cube">Cube 1 tasse</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                  <span class="badge text-bg-light tag">tag:proteine</span>
+                </div>
+                <h3 class="h5 mb-1">Mix chou et edamame, base neutre</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 6 à 7 tasses, 6 à 7 cubes</div>
+
+                <div class="smallcaps muted mb-1">Ingrédients</div>
+                <ul class="list-tight">
+                  <li>Environ 700 g chou tranché fin</li>
+                  <li>2 tasses edamame surgelé, décongelé</li>
+                  <li>1 c. à soupe huile neutre</li>
+                  <li>1/2 c. à thé sel</li>
+                  <li>1/2 c. à thé poudre d’ail</li>
+                  <li>Poivre, optionnel</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Sauter le chou 8 à 10 min, un peu de coloration.</li>
+                  <li>Ajouter sel et ail 1 min.</li>
+                  <li>Ajouter edamame 2 à 3 min.</li>
+                  <li>Refroidir, cubes 1 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Pairings</div>
+                <div class="muted">Poke végétarien, chili verde, poulet miel, bols rapides.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- DENSES 1/2 TASSE -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-denses" class="h4 section-title">Composants denses, cubes de 1/2 tasse</h2>
+            <p class="muted mb-0">Ici, on contrôle les portions: racines rôties, fruits, etc.</p>
+          </div>
+
+          <!-- Mixed roasted roots -->
+          <div class="col-12 col-lg-6 recipe" data-tags="dense 1-2-tasse racines patate patate-douce courge betterave cuisson-four congelo fibres">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Dense</span>
+                  <span class="badge badge-cube">Cube 1/2 tasse</span>
+                  <span class="badge text-bg-light tag">tag:cuisson-four</span>
+                </div>
+                <h3 class="h5 mb-1">Mélange racines rôties (un seul plateau)</h3>
+                <div class="muted mb-2"><span class="mono">Rendement:</span> environ 6 tasses, 12 cubes de 1/2 tasse</div>
+
+                <div class="smallcaps muted mb-1">Ingrédients</div>
+                <ul class="list-tight">
+                  <li>Pommes de terre, patates douces, courge, betteraves (couper uniforme)</li>
+                  <li>Huile, sel, poudre d’ail, paprika fumé optionnel</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Étapes</div>
+                <ol class="list-tight">
+                  <li>Four à 425°F. Rôtir 35 à 45 min, retourner une fois.</li>
+                  <li>Refroidir, cubes 1/2 tasse.</li>
+                </ol>
+
+                <div class="smallcaps muted mb-1">Usage</div>
+                <div class="muted">Traiter comme féculent: 0.5 tasse par repas.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Mango portions -->
+          <div class="col-12 col-lg-6 recipe" data-tags="dense 1-2-tasse fruit mangue poke bol congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Dense</span>
+                  <span class="badge badge-cube">Cube 1/2 tasse</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Mangue en portions</h3>
+                <div class="muted mb-2">Portionner la mangue surgelée en cubes de 1/2 tasse.</div>
+                <div class="smallcaps muted mb-1">Usage</div>
+                <ul class="list-tight">
+                  <li>Poke végétarien: 0.25 tasse par bol (la moitié d’un cube 1/2 tasse)</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- 30ml flavor cubes -->
+          <div class="col-12 col-lg-6 recipe" data-tags="dense 30ml saveur sauce curry-paste tomato-paste congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Saveurs</span>
+                  <span class="badge badge-cube">Cube 30 ml</span>
+                </div>
+                <h3 class="h5 mb-1">Cubes 30 ml, idées</h3>
+                <ul class="list-tight">
+                  <li>Pâte de curry rouge, portionnée</li>
+                  <li>Pâte de tomate</li>
+                  <li>Gingembre, ail, mélange</li>
+                  <li>Chili crisp, huile piment</li>
+                </ul>
+                <div class="muted">Objectif: réduire le gaspillage, accélérer les repas.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- BOLS -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-bols" class="h4 section-title">Bols assemblés, max 2.5 tasses</h2>
+            <p class="muted mb-0">Ces fiches décrivent l’assemblage, pas un cube unique.</p>
+          </div>
+
+          <!-- Vegetarian poke bowl -->
+          <div class="col-12 col-lg-6 recipe" data-tags="bol poke vegetarien edamame chou mangue riz calrose sans-tofu 2-5-tasses">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Bol</span>
+                  <span class="badge badge-cube">Assemblage</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                  <span class="badge text-bg-light tag">tag:vegetarien</span>
+                </div>
+                <h3 class="h5 mb-1">Bol poke végétarien, sans tofu</h3>
+                <div class="muted mb-2">Objectif portion: 2.5 tasses par personne.</div>
+
+                <div class="smallcaps muted mb-1">Portion par bol</div>
+                <ul class="list-tight">
+                  <li>0.75 tasse riz (Calrose idéal)</li>
+                  <li>0.75 tasse edamame</li>
+                  <li>0.75 tasse base légumes (chou + edamame ou brocoli slaw)</li>
+                  <li>0.25 tasse mangue (1/2 cube de 1/2 tasse)</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Sauce simple</div>
+                <ul class="list-tight">
+                  <li>Soya + vinaigre de riz + 1 c. à thé huile de sésame</li>
+                </ul>
+
+                <div class="smallcaps muted mb-1">Notes congélo</div>
+                <div class="muted">Congeler séparément riz, mix légumes, mangue. Ajouter nori et lime au service.</div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Coût et nutrition, par bol</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-cost">≈ 1.70 à 2.60 $</span>
+                  <span class="badge badge-nutri">≈ 450 à 600 kcal</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Generic bowl template -->
+          <div class="col-12 col-lg-6 recipe" data-tags="bol template 2-5-tasses systeme assemblage">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Bol</span>
+                  <span class="badge badge-cube">Template</span>
+                  <span class="badge text-bg-light tag">tag:bol</span>
+                </div>
+                <h3 class="h5 mb-1">Template bol, simple et stable</h3>
+                <div class="smallcaps muted mb-1">Format</div>
+                <ul class="list-tight">
+                  <li>1 tasse cube Plats principaux (protéine ou légumineuses)</li>
+                  <li>0.75 à 1 tasse riz ou quinoa (souvent 1 cube)</li>
+                  <li>0.75 à 1 tasse légumes base</li>
+                  <li>Option: 0.5 tasse racines rôties si besoin</li>
+                </ul>
+                <div class="muted">Total: 2.25 à 2.5 tasses. Tu restes dans ta limite.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- PATISSERIE -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-patisserie" class="h4 section-title">Boulangerie en cubes</h2>
+            <p class="muted mb-0">Bonus, portions contrôlées. Ici: banane, fibres, cuisson en moules silicone 1/2 tasse.</p>
+          </div>
+
+          <!-- Banana bread cubes -->
+          <div class="col-12 col-lg-8 recipe" data-tags="patisserie 1-2-tasse banane fibres hemps flax bran cuisson-four congelo">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <div class="d-flex flex-wrap gap-2 align-items-center mb-2">
+                  <span class="badge badge-cat">Boulangerie</span>
+                  <span class="badge badge-cube">Cube 1/2 tasse</span>
+                  <span class="badge text-bg-light tag">tag:cuisson-four</span>
+                  <span class="badge text-bg-light tag">tag:fibres</span>
+                </div>
+                <h3 class="h5 mb-1">Pain aux bananes riche en fibres, cubes 1/2 tasse</h3>
+                <div class="muted mb-2">Version avec son de blé + graines de lin + graines de chanvre. Rendement: 8 à 10 cubes.</div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Ingrédients</div>
+                    <ul class="list-tight">
+                      <li>4 bananes très mûres, écrasées (env 1.5 tasse)</li>
+                      <li>2 oeufs</li>
+                      <li>1/4 tasse huile neutre</li>
+                      <li>1/4 tasse miel ou sirop d’érable</li>
+                      <li>1 c. à thé vanille</li>
+                      <li>1 tasse farine blé entier</li>
+                      <li>1/3 tasse son de blé</li>
+                      <li>1/4 tasse graines de lin moulues</li>
+                      <li>1/4 tasse graines de chanvre</li>
+                      <li>1 c. à thé bicarbonate</li>
+                      <li>1/2 c. à thé cannelle</li>
+                      <li>1/4 c. à thé sel</li>
+                      <li>Option: noix, pépites, raisins en quantité modérée</li>
+                    </ul>
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <div class="smallcaps muted mb-1">Étapes, moules silicone</div>
+                    <ol class="list-tight">
+                      <li>Four à 350°F. Mettre les moules silicone sur une plaque métallique.</li>
+                      <li>Mélanger humide, mélanger sec, combiner sans trop brasser.</li>
+                      <li>Remplir chaque cavité presque jusqu’au bord.</li>
+                      <li>Cuire 30 à 40 min, vérifier à 30 min.</li>
+                      <li>Refroidir 10 à 15 min dans moule, démouler, refroidir complètement.</li>
+                      <li>Congeler et ensacher.</li>
+                    </ol>
+                    <div class="muted mt-2">
+                      Temps varie selon profondeur des moules. Éviter 400°F pour quick bread, centre risque d’être cru.
+                    </div>
+                  </div>
+                </div>
+
+                <div class="hr-soft"></div>
+                <div class="smallcaps muted mb-1">Nutrition et coût, par cube 1/2 tasse</div>
+                <div class="d-flex flex-wrap gap-2">
+                  <span class="badge badge-nutri">≈ 180 à 210 kcal</span>
+                  <span class="badge badge-nutri">≈ 7 à 9 g protéines</span>
+                  <span class="badge badge-nutri">≈ 6 à 8 g fibres</span>
+                  <span class="badge badge-cost">≈ 0.35 à 0.70 $</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ========================= -->
+          <!-- SIDES -->
+          <!-- ========================= -->
+          <div class="col-12">
+            <h2 id="sec-sides" class="h4 section-title">Accompagnements et idées, sans oignon frais</h2>
+            <p class="muted mb-0">Ici, surtout des idées modulaires. Ajouter acidité au service.</p>
+          </div>
+
+          <div class="col-12 col-lg-6 recipe" data-tags="side slaw chou mexicain frais">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <span class="badge badge-cat">Side</span>
+                <h3 class="h5 mb-2">Slaw chou lime, sans oignon</h3>
+                <ul class="list-tight">
+                  <li>Chou émincé</li>
+                  <li>Sel</li>
+                  <li>Lime au service</li>
+                  <li>Option: coriandre au service</li>
+                </ul>
+                <div class="muted">Meilleur frais, pas idéal en cubes long terme.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-12 col-lg-6 recipe" data-tags="side mexicain legumes idees">
+            <div class="card recipe-card">
+              <div class="card-body">
+                <span class="badge badge-cat">Idées mexicaines</span>
+                <h3 class="h5 mb-2">Légumes mexicains sans oignon, idées cubes</h3>
+                <ul class="list-tight">
+                  <li>Calabacitas (zucchini + maïs), cumin, ail</li>
+                  <li>Maïs rôti style elote, paprika fumé, lime au service</li>
+                  <li>Patate douce épicée rôtie, cumin, paprika</li>
+                  <li>Poivrons rôtis, ail, origan</li>
+                  <li>Haricots noirs cumin et ail (side fibre)</li>
+                </ul>
+                <div class="muted">Cubes 1/2 tasse ou 1 tasse selon densité.</div>
+              </div>
+            </div>
+          </div>
+
+
+
+        </div>
+
+        <footer class="mt-5 mb-4">
+
+        </footer>
+      </div>
+    </Plats principaux>
+
+    <!-- Bootstrap JS (optional for components, not required for search) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const clearBtn = document.getElementById("clearBtn");
+      const recipeEls = Array.from(document.querySelectorAll(".recipe"));
+
+      function norm(s) {
+        return (s || "")
+          .toString()
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "");
+      }
+
+      function getRecipeText(el) {
+        const tags = el.getAttribute("data-tags") || "";
+        const text = el.innerText || "";
+        return norm(tags + " " + text);
+      }
+
+      function applyFilter(qRaw) {
+        const q = norm(qRaw.trim());
+        recipeEls.forEach((el) => {
+          const hay = getRecipeText(el);
+          const show = q.length === 0 ? true : hay.includes(q);
+          el.style.display = show ? "" : "none";
+        });
+      }
+
+      // Search typing
+      searchInput.addEventListener("input", (e) => applyFilter(e.target.value));
+
+      // Quick filter buttons
+      document.querySelectorAll("[data-filter]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const v = btn.getAttribute("data-filter");
+          searchInput.value = v;
+          applyFilter(v);
+          searchInput.focus();
+        });
+      });
+
+      // Clear
+      clearBtn.addEventListener("click", () => {
+        searchInput.value = "";
+        applyFilter("");
+        searchInput.focus();
+      });
+
+      // Initial
+      applyFilter("");
+    </script>
+  </body>
+</html>
