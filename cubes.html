@@ -2471,7 +2471,6 @@ function applyMode() {
     });
   })();
 </script>
-
 <script>
   (function () {
     function wireMobileTools() {
@@ -2514,8 +2513,13 @@ function applyMode() {
 
       // Toggle en-stock (mobile déclenche desktop)
       if (toggleMobile && toggleDesktop && !toggleMobile.__wired) {
-        toggleMobile.addEventListener("click", () => toggleDesktop.click());
-        toggleMobile.__wired = true;
+        toggleMobile.addEventListener("click", () => {
+        toggleDesktop.click();
+        // sync champ mobile avec la valeur desktop après toggle
+        if (desktop) mobile.value = desktop.value;
+        if (typeof applyFilter === "function") applyFilter((desktop ? desktop.value : mobile.value) || "");
+      });
+toggleMobile.__wired = true;
       }
     }
 
@@ -2527,6 +2531,16 @@ function applyMode() {
       }
     });
   })();
+</script>
+
+<script>
+  // Toujours démarrer en haut (évite de recharger au bas de page si un hash est conservé)
+  window.addEventListener("load", () => {
+    if (location.hash) {
+      history.replaceState(null, "", location.pathname + location.search);
+    }
+    window.scrollTo(0, 0);
+  });
 </script>
 </body>
 </html>
