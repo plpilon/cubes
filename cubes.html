@@ -2864,10 +2864,9 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-      const searchInput = document.getElementById("searchInput");
-      const clearBtn = document.getElementById("clearBtn");
-      const recipeEls = Array.from(document.querySelectorAll(".recipe"));
-
+      // Global search state
+      let recipeEls = [];
+      
       function norm(s) {
         return (s || "")
           .toString()
@@ -2891,28 +2890,47 @@
         });
       }
 
-      // Search typing
-      searchInput.addEventListener("input", (e) => applyFilter(e.target.value));
+      // Initialize after DOM loads
+      document.addEventListener("DOMContentLoaded", () => {
+        recipeEls = Array.from(document.querySelectorAll(".recipe"));
+        
+        const searchInput = document.getElementById("searchInput");
+        const clearBtn = document.getElementById("clearBtn");
 
-      // Quick filter buttons
-      document.querySelectorAll("[data-filter]").forEach((btn) => {
-        btn.addEventListener("click", () => {
-          const v = btn.getAttribute("data-filter");
-          searchInput.value = v;
-          applyFilter(v);
-          searchInput.focus();
+        if (searchInput) {
+          // Search typing
+          searchInput.addEventListener("input", (e) => applyFilter(e.target.value));
+        }
+
+        // Quick filter buttons (both desktop and mobile)
+        document.querySelectorAll("[data-filter]").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const v = btn.getAttribute("data-filter");
+            if (searchInput) {
+              searchInput.value = v;
+              applyFilter(v);
+            }
+            const searchInputMobile = document.getElementById("searchInputMobile");
+            if (searchInputMobile) {
+              searchInputMobile.value = v;
+            }
+          });
         });
-      });
 
-      // Clear
-      clearBtn.addEventListener("click", () => {
-        searchInput.value = "";
+        // Clear button
+        if (clearBtn) {
+          clearBtn.addEventListener("click", () => {
+            if (searchInput) {
+              searchInput.value = "";
+              applyFilter("");
+              searchInput.focus();
+            }
+          });
+        }
+
+        // Initial filter
         applyFilter("");
-        searchInput.focus();
       });
-
-      // Initial
-      applyFilter("");
     </script>
     <script>
   (function(){
@@ -3334,3 +3352,4 @@ function applyMode() {
 
   </body>
 </html>
+
